@@ -8,17 +8,18 @@
     }
 
     if($_POST){
-        echo add_user($_POST);
+        add_user($_POST,$db,$errors);
     }
-    authenticate_user('Td','123');
 
 
 ?>
-<?php foreach($errors as $error): ?>
-<li><?php echo $error; ?></li>
-<?php endforeach; ?>
+<?php if($errors !== []): ?>
+    <?php foreach($errors as $error): ?>
+    <li><?php echo $error; ?></li>
+    <?php endforeach; ?>
+<?php endif; ?>
 
-<h1>Create User</h1>
+<h1>New Account</h1>
 
 <form action="" method="post">
     <label for="username">Username:</label>
@@ -29,6 +30,7 @@
     <input type="text" name="last_name" id="last_name" value="<?php echo $user['last_name'] ?? ""; ?>"><br />
     <label for="password">Password:</label>
     <input type="password" name="password" id="password"><br />
+    <label for="confirm_password">Confirm Password:</label><input type="password" name="confirm_password" id="confirm_psasword"><br />
     <button type="submit">Submit</button>
 </form>
 
