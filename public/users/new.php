@@ -8,7 +8,10 @@
     }
 
     if($_POST){
-        add_user($_POST,$db,$errors);
+        if(add_user($_POST,$db,$errors)){
+            echo "123";
+            redirect_to('../index.php');
+        }
     }
 
 

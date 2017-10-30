@@ -13,16 +13,10 @@ function add_user($user)
     $sql.= "(?,?,?,?)";
     $stmt = $db->prepare($sql);
     $stmt->bind_param("ssss",$user['first_name'],$user['last_name'],$user['username'],$user['password']);
-    $stmt->execute();
-
-    switch($stmt->errno){
-        case 1062:
-            $errors[] = "Username is already taken.";
-            break;
-        default:
-            break;
+    if($stmt->execute()){
+        return true;
     }
-    return 0;
+    return false;
 }
 
 function authenticate_user($username,$password,$admin = false)
@@ -78,4 +72,73 @@ function getSessionAndDestroy($key)
 function someoneIsLoggedIn()
 {
     return getSession('id') ?? false;
+}
+
+function uploadFile($file,$post){
+    global $db,$errors;
+    $photoName = $file['name'];
+    $photoTmp = $file['tmp_name'];
+    $id = getSession('id');
+    $uploadPath = '../../private/uploads/';
+    if(!file_exists($uploadPath)){
+        mkdir($uploadPath);
+    }
+    if(file_exists($uploadPath.getSession('id')."_".$photoName)){
+        $errors[] = "you have already uploaded that file!";
+    }
+    if(move_uploaded_file($photoTmp,$uploadPath.getSession('id').'_'.$photoName ) && empty($errors)){
+        $sql = "INSERT INTO photos (name,caption,uploaded_by) VALUES ";
+        $sql.= "(?,?,?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('ssi',$photoName,$post['caption'],$id);
+        if($stmt->execute()){
+            $photoid = $db->insert_id;
+            echo "successfully uploaded";
+            $sql = "INSERT INTO user_photo (user_id,photo_id) VALUES (?,?)";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param('ii',$id,$photoid);
+            $stmt->execute();
+        }
+        else{
+            echo "something went wrong";
+            
+        }
+    }
+    else{
+        print_r($errors);
+    }
+}
+
+function getAllPhotosforId($id){
+    global $db,$errors;
+    $photos = [];
+    $sql = "SELECT * FROM photos WHERE uploaded_by = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param('i',$id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if($result){
+        while($photo = $result->fetch_assoc()){
+            $photos[] = $photo;
+        }
+    }else{
+        return false;
+    }
+    return $photos;
+}
+
+function getAllUsersToShareWith($photoID){
+    global $db,$errors;
+    $users = [];
+    $sql = "SELECT users.* FROM users 
+            INNER JOIN user_photo ON users.id <> user_photo.user_id 
+            WHERE user_photo.photo_id <> '$photoID'";
+    $result = $db->query($sql);
+    if(!$result)
+        return false;
+    while($user = $result->fetch_assoc()){
+        $users[] = $user;
+    }
+    mysqli_free_result($result);
+    return $users;
 }
