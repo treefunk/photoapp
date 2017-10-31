@@ -131,14 +131,22 @@ function getAllUsersToShareWith($photoID){
     global $db,$errors;
     $users = [];
     $sql = "SELECT user_photo.* FROM user_photo
-            INNER JOIN users ON users.id <> user_photo.user_id 
+            INNER JOIN users ON users.id = user_photo.user_id 
             WHERE user_photo.photo_id = '$photoID'";
     $result = $db->query($sql);
     if(!$result)
         return false;
     while($user = $result->fetch_assoc()){
-        $users[] = $user;
+        $users[] = $user['id'];
     }
+    $sql = "SELECT * FROM users";
+    $r = $db->query($sql);
+    $all_users = [];
+    while($u = $r->fetch_assoc()){
+        $all_users[] = $u['id'];
+    }
+    $new = array_diff($all_users,$users);
     mysqli_free_result($result);
-    return $users;
+    print_r($new);
+    return $new;
 }
