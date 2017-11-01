@@ -5,6 +5,7 @@
 
     <?php if(someoneIsLoggedIn()): ?>
         Logged in as <?=getSession('username');?>
+    <?php else: redirect_to('login.php'); ?>
     <?php endif; ?>
 
 
@@ -16,7 +17,7 @@
     $photos = getAllPhotosforId(getSession('id'));
     foreach($photos as $photo):
     ?>
-    <?php $users = getAllUsersToShareWith($photo['id']); ?>
+    <?php $users = getAllUsersToShareWith($photo); ?>
 
     <h4><?=$photo['name']?></h4>
     <img src="../private/uploads/<?php echo getSession('id').'_'.$photo['name']?>" alt="">
@@ -31,8 +32,8 @@
     <select name="share_id" id="share_id">
         <?php
             foreach($users as $user){
-                if($user['id'] != getSession('id'))
-                echo "<option>".$user['id']."</option>";
+                if($user != getSession('id'))
+                echo "<option>".$user."</option>";
             }
         ?>
     </select>

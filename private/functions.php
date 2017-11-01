@@ -130,8 +130,8 @@ function getAllPhotosforId($id){
 function getAllUsersToShareWith($photoID){
     global $db,$errors;
     $users = [];
-    $sql = "SELECT user_photo.* FROM user_photo
-            INNER JOIN users ON users.id = user_photo.user_id 
+    $sql = "SELECT users.* FROM users 
+            INNER JOIN user_photo ON users.id = user_photo.user_id 
             WHERE user_photo.photo_id = '$photoID'";
     $result = $db->query($sql);
     if(!$result)
