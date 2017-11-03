@@ -97,7 +97,7 @@ function uploadFile($file,$post){
             $sql = "INSERT INTO user_photo (user_id,photo_id) VALUES (?,?)";
             $stmt = $db->prepare($sql);
             $stmt->bind_param('ii',$id,$photoid);
-            $stmt->execute();
+            //$stmt->execute();
         }
         else{
             echo "something went wrong";
@@ -105,7 +105,7 @@ function uploadFile($file,$post){
         }
     }
     else{
-        print_r($errors);
+        return false;
     }
 }
 
@@ -130,6 +130,7 @@ function getAllPhotosforId($id){
 function getAllUsersToShareWith($photoID){
     global $db,$errors;
     $users = [];
+    $all_users = [];
     $sql = "SELECT users.* FROM users 
             INNER JOIN user_photo ON users.id = user_photo.user_id 
             WHERE user_photo.photo_id = '$photoID'";
@@ -137,16 +138,88 @@ function getAllUsersToShareWith($photoID){
     if(!$result)
         return false;
     while($user = $result->fetch_assoc()){
-        $users[] = $user['id'];
+        $users[$user['id']] = $user['user_name'];
     }
     $sql = "SELECT * FROM users";
     $r = $db->query($sql);
-    $all_users = [];
+
     while($u = $r->fetch_assoc()){
-        $all_users[] = $u['id'];
+        $all_users[$u['id']] = $u['user_name'];
     }
-    $new = array_diff($all_users,$users);
+
+    $new = array_diff_assoc($all_users,$users);
+    unset($new[getSession('id')]);
     mysqli_free_result($result);
-    print_r($new);
     return $new;
+}
+
+function sharePhotoTo($target_id,$photo_id){
+    global $db,$errors;
+    $sql = "INSERT INTO user_photo (user_id,photo_id) VALUES (?, ?)";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param('ii',$target_id,$photo_id);
+    if($stmt->execute()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+function photosSharedWithThisID($id){
+    global $db, $errors;
+    $sql = "SELECT photos.* FROM photos INNER JOIN user_photo ON photos.id = user_photo.photo_id WHERE user_photo.user_id = '$id'";
+    
+    $r = $db->query($sql);
+    $photos = [];
+    if($r){
+        while($photo = $r->fetch_assoc()){
+            $photos[] = $photo;
+        }
+    }else{
+        echo "something went wrong";
+    }
+    mysqli_free_result($r);
+    return $photos;
+}
+
+function photoIdToUsername($id){
+    global $db,$errors;
+    $sql = "SELECT users.user_name FROM users WHERE id = '$id'";
+    $r = $db->query($sql);
+    if($r){
+        $photo = $r->fetch_assoc();
+        $username = $photo['user_name'];
+        return $username;
+    }
+    return "gg";
+}
+
+function downloadPhoto($id){
+    global $db,$errors;
+    $sql = "SELECT * FROM photos WHERE id = '$id'";
+    $r = $db->query($sql);
+    if($r){
+        $photo = $r->fetch_assoc();
+        $file = __DIR__."/uploads/".$photo['uploaded_by']."_".$photo['name'];
+        echo $file;
+        ob_clean();
+        if (file_exists($file)) {
+            header('Content-Description: File Transfer');
+            header('Content-Disposition: attachment; filename="'.$photo['name'].'"');
+            header('Content-Length: ' . filesize($file));
+            readfile($file);
+            set_time_limit(0);
+            // $file = fopen($file,"r");
+            // while(!feof($file)){
+            //     print(fread($file,1024*8));
+            // }
+
+
+            exit;
+        }else{
+            echo "file not exists";
+        }
+    }else{
+        return false;
+    }
 }

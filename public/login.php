@@ -23,7 +23,7 @@ if($_POST){
     <input type="password" name="password" id="password"><br />
     <button type="submit">Submit</button>
 </form>
-
+<a href="users/new.php">Register</a>    
 </div>
 
 <?php require_once PRIVATE_PATH.'/includes/footer.php'; ?>

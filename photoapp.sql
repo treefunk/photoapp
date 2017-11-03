@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
--- https://www.phpmyadmin.net/
+-- version 4.5.1
+-- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 01, 2017 at 06:36 AM
--- Server version: 10.1.28-MariaDB
--- PHP Version: 7.1.10
+-- Generation Time: Nov 03, 2017 at 04:07 PM
+-- Server version: 10.1.16-MariaDB
+-- PHP Version: 7.0.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -40,8 +38,9 @@ CREATE TABLE `photos` (
 --
 
 INSERT INTO `photos` (`id`, `name`, `caption`, `uploaded_by`) VALUES
-(35, 'smiley.jpg', '', '92'),
-(36, 'sadsmiley.png', '', '92');
+(2, 'frame dota2.jpg', '', '92'),
+(3, 'eyed.jpg', '', '104'),
+(4, 'cat cry.jpg', '', '92');
 
 -- --------------------------------------------------------
 
@@ -65,7 +64,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `user_name`, `password`, `admin`) VALUES
 (92, 'jhondee', 'diaz', 'jhondee', '$2y$10$bw4WWOM8ax5IOP5W5nHvVeGa5PN8gGBIF9080bbhAZFMOUjtX6LXG', 0),
 (104, 'brendan', 'coco', 'brendan', '$2y$10$J6BcmVC6ljHwwnyoRQRdSeX7HhO.z7V4pvM.H6DfGjPV2Qvt2iZw6', 0),
-(105, '123', '123', 'bsdaf', '$2y$10$ptsEqe7pDiGUru3TcedfGeq4UMVzkCwCnPl0KPWdyvZt8sWa.mQ8W', 0);
+(105, '123', '123', 'bsdaf', '$2y$10$ptsEqe7pDiGUru3TcedfGeq4UMVzkCwCnPl0KPWdyvZt8sWa.mQ8W', 0),
+(106, 'elline', 'elline', 'elline', '$2y$10$erOxDk1ySEWwIkPptzh.7.kcD1DWzjhPxMmXO9P.vf7JtF61UhNLW', 0),
+(107, 'g123', 'g123', 'g123', '$2y$10$1nZltUzkeUYgfiWoEC7/luNaG05it0k5rkpI6QBWre5RouNcZirfG', 0);
 
 -- --------------------------------------------------------
 
@@ -84,9 +85,10 @@ CREATE TABLE `user_photo` (
 --
 
 INSERT INTO `user_photo` (`id`, `user_id`, `photo_id`) VALUES
-(2, 92, 35),
-(3, 92, 36),
-(4, 104, 36);
+(19, 105, 2),
+(20, 104, 2),
+(22, 92, 3),
+(23, 104, 4);
 
 --
 -- Indexes for dumped tables
@@ -102,8 +104,7 @@ ALTER TABLE `photos`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `user_name` (`user_name`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `user_photo`
@@ -119,21 +120,17 @@ ALTER TABLE `user_photo`
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 --
 -- AUTO_INCREMENT for table `user_photo`
 --
 ALTER TABLE `user_photo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-COMMIT;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
